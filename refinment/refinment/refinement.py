@@ -32,6 +32,6 @@ def refine(spectra, mean_spectrum):
     integrals_refined = []
     for i in range(0, number_of_gradients):
         B = corrected_spectrum[:, i] / max_of_mean_spectrum
-        r = np.linalg.lstsq(A, B)
+        r = np.linalg.lstsq(A, B, rcond=None)
         integrals_refined.append(r[0][2])
     return integrals_refined

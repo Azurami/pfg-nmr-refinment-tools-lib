@@ -10,8 +10,9 @@ import time
 # clear figures after n calculation
 import numpy as np
 
-n = 10;
+n = 1;
 
+dir_name = 'static'
 
 def write_output_file(outputs):
     A_not_ref, D_not_ref, A_ref, D_ref, refined_integrals, gradients = prepare_only_numerical_outputs(outputs)
@@ -56,21 +57,21 @@ def prepare_only_numerical_outputs(outputs):
 
 
 def generate_csv_file(postfix):
-    if not os.path.isdir('static'):
-        os.mkdir('static')
-        scv_file_name = os.path.join('static', str(time.time()) + str(postfix) + '.csv')
+    if not os.path.isdir(dir_name):
+        os.mkdir(dir_name)
+        scv_file_name = os.path.join(dir_name, str(time.time()) + str(postfix) + '.csv')
     else:
-        scv_file_name = os.path.join('static', str(time.time()) + str(postfix) + '.csv')
+        scv_file_name = os.path.join(dir_name, str(time.time()) + str(postfix) + '.csv')
     return scv_file_name
 
 
 def remove_old_files():
-    path, dirs, files = next(os.walk('static'))
+    path, dirs, files = next(os.walk(dir_name))
     file_count = len(files)
-    if file_count > 5 * n:
-        for filename in glob.glob(os.path.join('static', '*.png')):
+    if file_count > 6 * n:
+        for filename in glob.glob(os.path.join(dir_name, '*.png')):
             os.remove(filename)
-        for filename in glob.glob(os.path.join('static', '*.csv')):
+        for filename in glob.glob(os.path.join(dir_name, '*.csv')):
             os.remove(filename)
     return 0
 

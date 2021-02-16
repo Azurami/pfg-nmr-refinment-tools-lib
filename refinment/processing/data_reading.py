@@ -6,29 +6,25 @@ import numpy as np
 import shutil
 from zipfile import ZipFile
 
-spectra_filename = 'spectra.zip'
-difflist_filename = 'difflist'
-UPLOAD_DIR = 'uploads/'
-
 
 def read_data_for_processing(spec_file, grad_file, data_directory):
     gradients = np.genfromtxt(grad_file)
     spectra_number = len(gradients)
 
-    with ZipFile(spec_file, 'r') as zipObj:
-        # Extract all the contents of zip file in current directory
-        zipObj.extractall(data_directory)
-    zipObj.close()
+    # with ZipFile(spec_file, 'r') as zipObj:
+    #     # Extract all the contents of zip file in current directory
+    #     zipObj.extractall(data_directory)
+    # zipObj.close()
 
     full_spectra = []
     for i in range(10001, 10001 + spectra_number):
         spectrum = np.genfromtxt((data_directory + '/' + str(i) + '/ascii-spec.txt'), delimiter=',')
         full_spectra.append(spectrum[:, 1])
 
-    try:
-        shutil.rmtree(data_directory)
-    except OSError as e:
-        print("Error:  %s" % e.strerror)
+    # try:
+    #     shutil.rmtree(data_directory)
+    # except OSError as e:
+    #     print("Error:  %s" % e.strerror)
 
     return full_spectra, gradients
 

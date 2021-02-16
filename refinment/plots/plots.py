@@ -7,13 +7,14 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 
+dir_name = 'static'
 
 def generate_png_file(postfix):
-    if not os.path.isdir('static'):
-        os.mkdir('static')
-        spec_file_name = os.path.join('static', str(time.time()) + str(postfix) + '.png')
+    if not os.path.isdir(dir_name):
+        os.mkdir(dir_name)
+        spec_file_name = os.path.join(dir_name, str(time.time()) + str(postfix) + '.png')
     else:
-        spec_file_name = os.path.join('static', str(time.time()) + str(postfix) + '.png')
+        spec_file_name = os.path.join(dir_name, str(time.time()) + str(postfix) + '.png')
     return spec_file_name
 
 

@@ -13,6 +13,6 @@ def do_processing(gamma, small_delta, big_delta, spectra_full_file_name, difflis
     full_spectra, gradients = read_data_for_processing(spectra_full_file_name, difflist_full_file_name, full_upload_dir_name)
     sorted_sliced_spectra, sorted_gradients = prepare_data_for_processing(full_spectra, gradients, right_point, left_point)
     outputs = process(gamma, small_delta, big_delta, sorted_gradients, sorted_sliced_spectra)
-    # write_output_file(outputs)
+    write_output_file(outputs)
     # outputs = [ A_not_ref, D_not_ref, A_ref, D_ref, refined_integrals, figure_full_names ]
     return outputs
