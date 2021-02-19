@@ -3,11 +3,11 @@
 # INPUT: gamma, small_delta, big_delta, gradients, spectra
 # OUTPUT: D_not_ref, A_not_ref, D_ref, A_ref, refined_integrals, gradients, figure_full_names
 
-from refinment.plots.plots import plot_integrals, plot_fitting_non_ref, \
+from refinment.plots import plot_integrals, plot_fitting_non_ref, \
     plot_ref_vs_not_ref_integrals, plot_fitting_ref, plot_spectra
-from refinment.fitting.fit import compute_beta, st_fit, fit_function
-from refinment.integrals.integrate import normalize, integrate
-from refinment.refinment.refinement import compute_mean_spectrum, refine
+from refinment.fit import compute_beta, st_fit, fit_function
+from refinment.integrate import normalize, integrate
+from refinment.refinement import compute_mean_spectrum, refine
 
 
 def process(gamma, small_delta, big_delta, gradients, spectra):
