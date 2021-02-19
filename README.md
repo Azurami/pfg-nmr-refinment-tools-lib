@@ -8,14 +8,15 @@ You should provide the following inputs: gamma (Hz/G), gradient pulse duration (
 
 You can test the tool on sample data by following command:
 <div class="highlight highlight-source-shell"><pre>
-python process.py -gamma=4258.0 -small_delta=0.0054 -big_delta=0.1 -left_point=1000 -right_point=19000 -specdir=\sample_data\spectra -difflist=\sample_data\difflist -resultsdir=\results
+python process.py --gamma=4258.0 --small_delta=0.0054 --big_delta=0.1 --left_point=1000 --right_point=19000 --specdir=\sample_data\spectra --difflist=\sample_data\difflist --resultsdir=\results
 
 </div>
 
 General execution command:
 <div class="highlight highlight-source-shell"><pre>
-usage: process.py -gamma GAMMA] [-small_delta SMALL_DELTA] [-big_delta BIG_DELTA] [-left_point LEFT_POINT] [-right_point RIGHT_POINT] [-specdir SPECDIR]
-                  [-difflist DIFFLIST] [-resultsdir RESULTSDIR]
+usage: process.py [--gamma GAMMA] [--small_delta SMALL_DELTA] [--big_delta BIG_DELTA] [--left_point LEFT_POINT] [--right_point RIGHT_POINT] [--specdir SPECDIR]
+                  [--difflist DIFFLIST] [--resultsdir RESULTSDIR]
+
 
 </div>
 
