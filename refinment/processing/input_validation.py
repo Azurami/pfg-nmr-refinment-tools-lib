@@ -4,6 +4,9 @@
 def validate(gamma, small_delta, big_delta, full_spectra, gradients, left_point, right_point):
     valid = True
     msg = 'All right'
+    spectra_len = len(full_spectra[1])
+    spectra_numbers = len(full_spectra[:, 1])
+
     if isinstance(gamma, int) or isinstance(gamma, float):
         pass
     else:
@@ -21,12 +24,23 @@ def validate(gamma, small_delta, big_delta, full_spectra, gradients, left_point,
     else:
         valid = False
         msg = 'Diffusion time is not a number or diffusion time is less or equal than Gradient pulse duration!'
-    spectra_len = len(full_spectra[1])
-    number_of_spectra = len(full_spectra)
+
     if isinstance(left_point, int) and left_point < int(spectra_len):
         pass
     else:
         valid = False
         msg = 'Left point is not int or bigger than spectrum length!'
+
+    if isinstance(right_point, int) and int(spectra_len) > right_point > left_point:
+        pass
+    else:
+        valid = False
+        msg = 'Right point is not int or bigger than spectrum length or smaller than left point!'
+
+    if spectra_numbers >= len(gradients):
+        pass
+    else:
+        valid = False
+        msg = 'Spectrum number is smaller than gradients number!'
 
     return valid, msg

@@ -4,7 +4,7 @@
 #        full_upload_dir_name, right_point, left_point
 # OUTPUT: D_not_ref, A_not_ref, D_ref, A_ref, refined_integrals, gradients, plots_file_names
 
-from refinment.processing.data_reading import read_data_for_processing, prepare_data_for_processing
+from refinment.processing.data_reading import read_data_for_processing_bruker, prepare_data_for_processing
 from refinment.processing.processor import process
 
 

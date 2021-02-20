@@ -3,9 +3,18 @@
 # OUTPUT: sorted_sliced_spectra and stored_gradients
 
 import numpy as np
+import nmrglue as ng
 
 
-def read_data_for_processing(grad_file, data_directory):
+def read_data_for_processing_bruker(grad_file, data_directory):
+    gradients = np.genfromtxt(grad_file)
+    spectra_number = len(gradients)
+    dic, data = ng.bruker.read_pdata(data_directory)
+    full_spectra = data.real
+    return full_spectra, gradients
+
+
+def read_data_for_processing_ascii(grad_file, data_directory):
     gradients = np.genfromtxt(grad_file)
     spectra_number = len(gradients)
     full_spectra = []
