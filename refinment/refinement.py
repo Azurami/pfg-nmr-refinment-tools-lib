@@ -4,13 +4,13 @@
 import numpy as np
 
 
-def compute_mean_spectrum(spectra, exp_func_value):
+def compute_mean_spectrum(spectra, normalized_integrals):
     number_of_gradients = len(spectra[:, 1])
     spectra = np.transpose(spectra)
     w = []
     # Calculate the weights of the spectra for mean spectrum
     for i in range(0, number_of_gradients):
-        w.append(exp_func_value[i])
+        w.append(normalized_integrals[i])
     w = w / sum(w)
     # Calculate the mean spectrum
     mean_spectrum = []
@@ -19,6 +19,25 @@ def compute_mean_spectrum(spectra, exp_func_value):
     mean_spectrum = sum(mean_spectrum)
     return mean_spectrum
 
+def correct_baseline(spectra):
+    number_of_spectra = len(spectra[:, 1])
+    corrected_spectra = []
+    for i in range(0, number_of_spectra):
+        spec_curr = spectra[i, :]
+        spectrum_len = len(spec_curr)
+        #baseline is a linear function y = a0+a1*x
+        y_left = spec_curr[0]
+        y_right = spec_curr[-1]
+
+        a0 = y_left
+        a1 = (y_right - y_left) / spectrum_len
+        x = np.linspace(0, spectrum_len, spectrum_len)
+        baseline = a0+a1*x;
+
+        spec_curr = spec_curr - baseline;
+        corrected_spectra.append(spec_curr)
+    corrected_spectra = np.array(corrected_spectra)
+    return corrected_spectra
 
 def refine(spectra, mean_spectrum):
     number_of_gradients = len(spectra[:, 1])

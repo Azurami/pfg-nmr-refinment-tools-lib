@@ -26,7 +26,6 @@ if __name__ == '__main__':
     parser.add_argument('--resultsdir', type=str, dest='resultsdir', help='Output dir for results')
     args = parser.parse_args()
 
-
     def read_inputs(args):
         gamma = args.gamma
         small_delta = args.small_delta
