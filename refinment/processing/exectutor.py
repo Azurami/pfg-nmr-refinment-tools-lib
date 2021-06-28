@@ -3,6 +3,8 @@
 # INPUT: gamma, small_delta, big_delta, gradient_strength, spectra_full_file_name, difflist_full_file_name,
 #        full_upload_dir_name, right_point, left_point
 # OUTPUT: D_not_ref, A_not_ref, D_ref, A_ref, refined_integrals, difflist, plots_file_names
+import os
+
 from refinment.files_controller import make_uuid_dir
 from refinment.plots import Plotter
 from refinment.processing.data_reading import prepare_data_for_processing, get_data_for_processing, UnitConverter
@@ -10,11 +12,17 @@ from refinment.processing.processor import process_for_comparison
 from tqdm import tqdm
 import pandas as pd
 
+from refinment.refinement import correct_baseline_full_spectra
 
 
 def do_processing(right_point, left_point, acqu_dir_name, spc_dir_name, grad_shape_dir_name, prot_name, fit_type, converter, spectrum_number, peak_number):
     full_spectra, difflist, p1, p30, d16, d20, NS, RG = get_data_for_processing(acqu_dir_name, spc_dir_name, grad_shape_dir_name)
     gamma = 4258 # for 1H
+
+    noise_left = [(4000, 6000)]
+    noise_right = [(58000, 60000)]
+
+    full_spectra = correct_baseline_full_spectra(full_spectra, noise_left, noise_right)
 
     sorted_sliced_spectra, sorted_difflist, sorted_full_spectra = prepare_data_for_processing(full_spectra, difflist, left_point, right_point)
 
@@ -65,6 +73,7 @@ def run_processing(prot_name, path_to_datasets, spectra_id, peaks, fit_type):
                                  'RMSD_ref': RMSD_ref
                                  }
             df_new_row = pd.DataFrame(data=spectral_data_row, index=[spectrum_number])
-            df_spectral_data = df_spectral_data.append(df_new_row, ignore_index=True)
-    df_spectral_data.to_csv(prot_name + '.csv', index=False)
+            # df_spectral_data = df_spectral_data.append(df_new_row, ignore_index=True)
+            df_new_row.to_csv(prot_name + '.csv', index=False, mode='a', header=not os.path.exists(prot_name + '.csv'))
+
     return 0

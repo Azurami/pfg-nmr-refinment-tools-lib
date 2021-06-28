@@ -7,15 +7,11 @@ import numpy as np
 from refinment.fit import FitFunctionClassSTE, FitFunctionClassDSTEbp, FitFunctionClassDSTE, FitFunctionClassSTEbp, \
     FitFunctionClassSTEn, FitFunctionClassSTEbpn, FitFunctionClassDSTEn, FitFunctionClassDSTEbpn
 from refinment.integrate import normalize, integrate
-from refinment.refinement import compute_mean_spectrum, refine, correct_baseline
+from refinment.refinement import compute_mean_spectrum, refine, correct_baseline, calculate_spectra, \
+    calculate_mean_spectra_of_noise
 
 
 def process_for_comparison(gamma, p30, d20, gradients, spectra, fit_type, p1, d16, plotter):
-    plotter.plot_spectra(spectra)
-    integrals = integrate(spectra)
-    plotter.plot_integrals(gradients, integrals)
-
-    normalized_integrals = normalize(integrals)
     # standard
     if fit_type == 'ste':
         fitter = FitFunctionClassSTE(gamma, p30, d20)
@@ -35,20 +31,50 @@ def process_for_comparison(gamma, p30, d20, gradients, spectra, fit_type, p1, d1
     if fit_type == 'ndstebp':
         fitter = FitFunctionClassDSTEbpn(gamma, p30, d20, p1, d16)
 
+    # spectra = correct_baseline(spectra)
+    plotter.plot_spectra(spectra)
+    integrals = integrate(spectra)
+    plotter.plot_integrals(gradients, integrals)
+
+    normalized_integrals = normalize(integrals)
+    normalized_standard_integrals = normalized_integrals
+
     A_not_ref, D_not_ref, exp_function_not_ref, pcov_not_ref, RMSD_not_ref = fitter.fit(gradients, normalized_integrals)
     plotter.plot_fitting_non_ref(gradients, normalized_integrals, exp_function_not_ref)
 
     spectra = correct_baseline(spectra)
+    plotter.plot_spectra_bl_corrected(spectra)
+
     integrals = integrate(spectra)
     normalized_integrals = normalize(integrals)
 
     mean_spectrum = compute_mean_spectrum(spectra, normalized_integrals)
     refined_integrals = refine(spectra, mean_spectrum)
     normalized_refined_integrals = normalize(refined_integrals)
-    plotter.plot_ref_vs_not_ref_integrals(gradients, normalized_integrals, normalized_refined_integrals)
+    plotter.plot_ref_vs_not_ref_integrals(gradients, normalized_standard_integrals, normalized_refined_integrals)
 
     A_ref, D_ref, exp_function_ref, pcov_ref, RMSD_ref = fitter.fit(gradients, normalized_refined_integrals)
     plotter.plot_fitting_ref(gradients, normalized_refined_integrals, exp_function_ref)
+
+    plotter.plot_fitting_ref_not_ref(gradients, exp_function_not_ref, exp_function_ref)
+
+    # ideal_spectra = calculate_spectra(mean_spectrum, refined_integrals)
+    #
+    # plotter.plot_ideal_spectra(ideal_spectra)
+    #
+    # spectra_residual = spectra - ideal_spectra
+    #
+    # plotter.plot_residual_spectra(spectra_residual)
+    #
+    # mean_residual = calculate_mean_spectra_of_noise(spectra_residual)
+    #
+    # plotter.plot_mean_residual_spectra(mean_residual)
+    #
+    # np.savetxt('spectra3.out', spectra, delimiter=',')
+    # np.savetxt('mean_spectra3.out', mean_spectrum, delimiter=',')
+    # np.savetxt('refined_integrals3.out', refined_integrals, delimiter=',')
+    # np.savetxt('gradients.out', gradients, delimiter=',')
+
 
     SDE_not_ref = np.sqrt(np.diag(pcov_not_ref))[1]
     SDE_ref = np.sqrt(np.diag(pcov_ref))[1]

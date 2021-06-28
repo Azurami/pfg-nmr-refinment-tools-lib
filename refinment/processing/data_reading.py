@@ -99,3 +99,31 @@ class UnitConverter:
         left_point = -1 * float(left) / self.k + self.c / self.k
         right_point = -1 * float(right) / self.k + self.c / self.k
         return float(left_point), float(right_point)
+
+
+def form_peak_list(peak_borders):
+    peak_number = len(peak_borders)
+
+    First_point = []
+    Last_point = []
+
+    peaks = []
+
+    area_number = 0;
+
+    for i in range(0, peak_number):
+        for j in range(i + 1, peak_number):
+            if abs(i - j) == 1:
+                area_number = area_number + 1
+                peaks.append((peak_borders[i], peak_borders[j]))
+                First_point.append(peak_borders[i])
+                Last_point.append(peak_borders[j])
+
+    for i in range(0, peak_number - 1):
+        for j in range(i + 1, peak_number):
+            if abs(i - j) != 1:
+                area_number = area_number + 1
+                peaks.append((peak_borders[i], peak_borders[j]))
+                First_point.append(peak_borders[i])
+                Last_point.append(peak_borders[j])
+    return peaks

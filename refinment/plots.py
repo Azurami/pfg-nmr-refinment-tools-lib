@@ -19,6 +19,7 @@ def create_figures_dir(uuid, spectrum_number):
 class Plotter:
     def __init__(self, uuid, left, right, converter, spectrum_number, peak_number):
         matplotlib.use('Agg')
+        # matplotlib.use('TkAgg')
         self.SAVE_DIR = create_figures_dir(uuid, spectrum_number)
         self.peak_number = peak_number
         self.converter = converter
@@ -52,6 +53,27 @@ class Plotter:
             ax.plot(x, spectra[i, :], linewidth=0.5)
         ax.set_title("Stack of spectra (integration region). Peak is " + self.peak_number)
         spec_file_name = self.generate_png_file('2. spectra_peak_'+self.peak_number)
+        plt.savefig(spec_file_name, dpi=600)
+        plt.close()
+        return spec_file_name
+
+
+    def plot_spectra_bl_corrected(self, spectra):
+        fig, ax = plt.subplots()
+        spectra = np.array(spectra)
+        spectrum_len = len(spectra[1, :])
+        number_of_spectra = len(spectra[:, 1])
+        # x = range(self.left, self.right)
+        x = np.linspace(self.left, self.right, spectrum_len)
+        if self.boundary_type == "ppm":
+            ax.invert_xaxis()
+            ax.set_xlabel("ppm")
+        else:
+            ax.set_xlabel("points")
+        for i in range(0, number_of_spectra):
+            ax.plot(x, spectra[i, :], linewidth=0.5)
+        ax.set_title("Stack of spectra (integration region) with bl correction. Peak is " + self.peak_number)
+        spec_file_name = self.generate_png_file('5. spectra_peak_corrected_'+self.peak_number)
         plt.savefig(spec_file_name, dpi=600)
         plt.close()
         return spec_file_name
@@ -126,7 +148,7 @@ class Plotter:
         ax.set_ylabel("Intensity")
         ax.grid()
         ax.legend()
-        spec_file_name_ref_vs_decay = self.generate_png_file('5. Ref_vs_non-ref_peak' + self.peak_number)
+        spec_file_name_ref_vs_decay = self.generate_png_file('6. Ref_vs_non-ref_peak' + self.peak_number)
         fig.savefig(spec_file_name_ref_vs_decay, dpi=600)
         plt.close()
         return spec_file_name_ref_vs_decay
@@ -141,7 +163,84 @@ class Plotter:
         ax.set_ylabel("Integrated signal")
         ax.grid()
         # ax.legend()
-        spec_file_name_ref_decay = self.generate_png_file('6. ref_decay_peak_'+ self.peak_number)
+        spec_file_name_ref_decay = self.generate_png_file('7. ref_decay_peak_'+ self.peak_number)
         fig.savefig(spec_file_name_ref_decay, dpi=600)
         plt.close()
         return spec_file_name_ref_decay
+
+    def plot_fitting_ref_not_ref(self, grad, exp_func_value1,  exp_func_value2):
+        fig, ax = plt.subplots()
+        g = np.linspace(0, max(grad))
+        ax.plot(g, exp_func_value1, 'r-', label="fit not ref")
+        ax.plot(g, exp_func_value2, 'b-', label="fit ref")
+        plt.title('Fittings. Peak is ' + self.peak_number)
+        ax.set_xlabel("Gradient g, G/cm")
+        ax.set_ylabel("Integrated signal")
+        ax.grid()
+        ax.legend()
+        spec_file_name_ref_decay = self.generate_png_file('8. ref_and_not_ref_decay_peak_'+ self.peak_number)
+        fig.savefig(spec_file_name_ref_decay, dpi=600)
+        plt.close()
+        return spec_file_name_ref_decay
+
+    def plot_ideal_spectra(self, spectra):
+        fig, ax = plt.subplots()
+        spectra = np.array(spectra)
+        spectrum_len = len(spectra[1, :])
+        number_of_spectra = len(spectra[:, 1])
+        # x = range(self.left, self.right)
+        x = np.linspace(self.left, self.right, spectrum_len)
+        if self.boundary_type == "ppm":
+            ax.invert_xaxis()
+            ax.set_xlabel("ppm")
+        else:
+            ax.set_xlabel("points")
+        for i in range(0, number_of_spectra):
+            ax.plot(x, spectra[i, :], linewidth=0.5)
+        ax.set_title("Stack of IDEAL spectra (integration region). Peak is " + self.peak_number)
+        spec_file_name = self.generate_png_file('9. spectra_peak_IDEAL_'+self.peak_number)
+        plt.savefig(spec_file_name, dpi=600)
+        plt.close()
+        return spec_file_name
+
+    def plot_residual_spectra(self, spectra):
+        fig, ax = plt.subplots()
+        spectra = np.array(spectra)
+        spectrum_len = len(spectra[1, :])
+        number_of_spectra = len(spectra[:, 1])
+        # x = range(self.left, self.right)
+        x = np.linspace(self.left, self.right, spectrum_len)
+        if self.boundary_type == "ppm":
+            ax.invert_xaxis()
+            ax.set_xlabel("ppm")
+        else:
+            ax.set_xlabel("points")
+        for i in range(0, number_of_spectra):
+            ax.plot(x, spectra[i, :], linewidth=0.5)
+        ax.set_title("Stack of residual spectra (integration region). Peak is " + self.peak_number)
+        spec_file_name = self.generate_png_file('10. spectra_peak_residual_'+self.peak_number)
+        plt.savefig(spec_file_name, dpi=600)
+        plt.close()
+        return spec_file_name
+
+    def plot_mean_residual_spectra(self, spectra):
+        fig, ax = plt.subplots()
+        spectra = np.array(spectra)
+        spectrum_len = len(spectra[1, :])
+        number_of_spectra = len(spectra[:, 1])
+        # x = range(self.left, self.right)
+        x = np.linspace(self.left, self.right, spectrum_len)
+        if self.boundary_type == "ppm":
+            ax.invert_xaxis()
+            ax.set_xlabel("ppm")
+        else:
+            ax.set_xlabel("points")
+        for i in range(0, number_of_spectra):
+            ax.plot(x, spectra[i, :], linewidth=0.5)
+        ax.set_title("Stack of residual spectra (integration region). Peak is " + self.peak_number)
+        spec_file_name = self.generate_png_file('11. spectra_peak_residual_'+self.peak_number)
+        plt.savefig(spec_file_name, dpi=600)
+        plt.close()
+        return spec_file_name
+
+
