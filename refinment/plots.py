@@ -8,19 +8,35 @@ import numpy as np
 import matplotlib
 
 
+# each spectrum has own dir
+# def create_figures_dir(uuid, spectrum_number):
+#     full_name_figures_dir = os.path.join('results/', uuid + str('/') + str(spectrum_number))
+#     if not os.path.isdir(full_name_figures_dir):
+#         os.mkdir(full_name_figures_dir)
+#     return full_name_figures_dir
 
-def create_figures_dir(uuid, spectrum_number):
-    full_name_figures_dir = os.path.join('results/', uuid + str('/') + str(spectrum_number))
+def create_figures_dir_not_ref(uuid, spectrum_number):
+    full_name_figures_dir = os.path.join('results/', uuid + str('/') + 'not_ref')
     if not os.path.isdir(full_name_figures_dir):
         os.mkdir(full_name_figures_dir)
     return full_name_figures_dir
 
+def create_figures_dir_ref(uuid, spectrum_number):
+    full_name_figures_dir = os.path.join('results/', uuid + str('/') + 'ref')
+    if not os.path.isdir(full_name_figures_dir):
+        os.mkdir(full_name_figures_dir)
+    return full_name_figures_dir
 
 class Plotter:
     def __init__(self, uuid, left, right, converter, spectrum_number, peak_number):
         matplotlib.use('Agg')
         # matplotlib.use('TkAgg')
-        self.SAVE_DIR = create_figures_dir(uuid, spectrum_number)
+        self.spectrum_number = spectrum_number
+        # self.SAVE_DIR = create_figures_dir(uuid, spectrum_number)
+
+        self.SAVE_DIR_NOT_REF = create_figures_dir_not_ref(uuid, spectrum_number)
+        self.SAVE_DIR_REF = create_figures_dir_ref(uuid, spectrum_number)
+
         self.peak_number = peak_number
         self.converter = converter
         self.boundary_type = converter.boundary_type
@@ -32,9 +48,19 @@ class Plotter:
             self.left = left
             self.right = right
 
-    def generate_png_file(self, postfix):
+    # def generate_png_file(self, postfix):
+    #     # os.mkdir(self.SAVE_DIR)
+    #     figure_file_name = os.path.join(self.SAVE_DIR, str(postfix) + '.png')
+    #     return figure_file_name
+
+    def generate_png_file_ref(self, postfix):
         # os.mkdir(self.SAVE_DIR)
-        figure_file_name = os.path.join(self.SAVE_DIR, str(postfix) + '.png')
+        figure_file_name = os.path.join(self.SAVE_DIR_REF, str(postfix) +' (' +str(self.spectrum_number) + ').png')
+        return figure_file_name
+
+    def generate_png_file_not_ref(self, postfix):
+        # os.mkdir(self.SAVE_DIR)
+        figure_file_name = os.path.join(self.SAVE_DIR_NOT_REF, str(postfix) +' (' +str(self.spectrum_number) + ').png')
         return figure_file_name
 
     def plot_spectra(self, spectra):
@@ -51,8 +77,8 @@ class Plotter:
             ax.set_xlabel("points")
         for i in range(0, number_of_spectra):
             ax.plot(x, spectra[i, :], linewidth=0.5)
-        ax.set_title("Stack of spectra (integration region). Peak is " + self.peak_number)
-        spec_file_name = self.generate_png_file('2. spectra_peak_'+self.peak_number)
+        ax.set_title("Stack of spectra (integration region). Peak is " + self.peak_number+'. Spec No '+self.peak_number)
+        spec_file_name = self.generate_png_file_not_ref('2. spectra_peak_'+self.peak_number)
         plt.savefig(spec_file_name, dpi=600)
         plt.close()
         return spec_file_name
@@ -72,8 +98,8 @@ class Plotter:
             ax.set_xlabel("points")
         for i in range(0, number_of_spectra):
             ax.plot(x, spectra[i, :], linewidth=0.5)
-        ax.set_title("Stack of spectra (integration region) with bl correction. Peak is " + self.peak_number)
-        spec_file_name = self.generate_png_file('5. spectra_peak_corrected_'+self.peak_number)
+        ax.set_title("Stack of spectra (integration region) with bl correction. Peak is " + self.peak_number+'. Spec No '+self.peak_number)
+        spec_file_name = self.generate_png_file_ref('5. spectra_peak_corrected_'+self.peak_number)
         plt.savefig(spec_file_name, dpi=600)
         plt.close()
         return spec_file_name
@@ -106,8 +132,8 @@ class Plotter:
         # ax.plot(x_full, spectra[1, :])
         # ax.plot(x_to_integrate, spectra[1, left:right], 'r')
         ax.set_ylim([1.05*min_intensity_all, 2.5*max_intensity_region])
-        ax.set_title("Integration region is colored red. Peak is " + self.peak_number)
-        spec_file_name = self.generate_png_file('1. full_spectra_peak_' + self.peak_number)
+        ax.set_title("Integration region is colored red. Peak is " + self.peak_number+'. Spec No '+self.peak_number)
+        spec_file_name = self.generate_png_file_not_ref('1. full_spectra_peak_' + self.peak_number)
         plt.savefig(spec_file_name, dpi=600)
         plt.close()
         return spec_file_name
@@ -115,11 +141,11 @@ class Plotter:
     def plot_integrals(self, grad, integrals):
         fig, ax = plt.subplots()
         ax.scatter(grad, integrals, marker='o')
-        ax.set_title("Absolute integrals vs. gradients. Peak is " + self.peak_number)
+        ax.set_title("Absolute integrals vs. gradients. Peak is " + self.peak_number+'. Spec No '+self.peak_number)
         ax.grid()
         ax.set_xlabel("Gradient, G/cm")
         ax.set_ylabel("Intensity")
-        spec_file_name = self.generate_png_file('3. integrals_peak_'+ self.peak_number)
+        spec_file_name = self.generate_png_file_not_ref('3. integrals_peak_'+ self.peak_number)
         plt.savefig(spec_file_name, dpi=600)
         plt.close()
         return spec_file_name
@@ -129,12 +155,12 @@ class Plotter:
         g = np.linspace(0, max(grad))
         ax.plot(grad, integrals, 'bo', label='Experimental data')
         ax.plot(g, exp_func_value, 'r-', label="fit")
-        plt.title('Intensity decay. Data is not refiend. Peak is ' + self.peak_number)
+        plt.title('Intensity decay. Data is not refiend. Peak is ' + self.peak_number+'. Spec No '+self.peak_number)
         ax.set_xlabel("Gradient, G/cm")
         ax.set_ylabel("Intensity")
         ax.grid()
         ax.legend()
-        spec_file_name_not_ref_decay = self.generate_png_file('4. not_ref_decay_peak_' + self.peak_number)
+        spec_file_name_not_ref_decay = self.generate_png_file_not_ref('4. not_ref_decay_peak_' + self.peak_number)
         fig.savefig(spec_file_name_not_ref_decay, dpi=600)
         plt.close()
         return spec_file_name_not_ref_decay
@@ -143,12 +169,12 @@ class Plotter:
         fig, ax = plt.subplots()
         ax.plot(grad, integrals, 'bo', label='Experimental data')
         ax.plot(grad, integrals_refined, 'r*', label="Refined Experimental data")
-        plt.title('Refined values vs. not refined. Peak is ' + self.peak_number)
+        plt.title('Refined values vs. not refined. Peak is ' + self.peak_number+'. Spec No '+self.peak_number)
         ax.set_xlabel("Gradient, G/cm")
         ax.set_ylabel("Intensity")
         ax.grid()
         ax.legend()
-        spec_file_name_ref_vs_decay = self.generate_png_file('6. Ref_vs_non-ref_peak' + self.peak_number)
+        spec_file_name_ref_vs_decay = self.generate_png_file_ref('6. Ref_vs_non-ref_peak' + self.peak_number)
         fig.savefig(spec_file_name_ref_vs_decay, dpi=600)
         plt.close()
         return spec_file_name_ref_vs_decay
@@ -158,12 +184,12 @@ class Plotter:
         g = np.linspace(0, max(grad))
         ax.plot(grad, integrals, 'bo', label='Refined Experimental data')
         ax.plot(g, exp_func_value, 'r-', label="fit")
-        plt.title('Data fit. Peak is ' + self.peak_number)
+        plt.title('Data fit. Peak is ' + self.peak_number+'. Spec No '+self.peak_number)
         ax.set_xlabel("Gradient g, G/cm")
         ax.set_ylabel("Integrated signal")
         ax.grid()
         # ax.legend()
-        spec_file_name_ref_decay = self.generate_png_file('7. ref_decay_peak_'+ self.peak_number)
+        spec_file_name_ref_decay = self.generate_png_file_ref('7. ref_decay_peak_'+ self.peak_number)
         fig.savefig(spec_file_name_ref_decay, dpi=600)
         plt.close()
         return spec_file_name_ref_decay
@@ -173,12 +199,12 @@ class Plotter:
         g = np.linspace(0, max(grad))
         ax.plot(g, exp_func_value1, 'r-', label="fit not ref")
         ax.plot(g, exp_func_value2, 'b-', label="fit ref")
-        plt.title('Fittings. Peak is ' + self.peak_number)
+        plt.title('Fittings. Peak is ' + self.peak_number+'. Spec No '+self.peak_number)
         ax.set_xlabel("Gradient g, G/cm")
         ax.set_ylabel("Integrated signal")
         ax.grid()
         ax.legend()
-        spec_file_name_ref_decay = self.generate_png_file('8. ref_and_not_ref_decay_peak_'+ self.peak_number)
+        spec_file_name_ref_decay = self.generate_png_file_ref('8. ref_and_not_ref_decay_peak_'+ self.peak_number)
         fig.savefig(spec_file_name_ref_decay, dpi=600)
         plt.close()
         return spec_file_name_ref_decay
