@@ -5,6 +5,20 @@
 import numpy as np
 import nmrglue as ng
 
+def get_data_for_processing_CSV(acqu_dir_name, spc_dir_name, grad_shape_dir_name, spectrum_number, path_to_datasets):
+    full_spectra, dic = read_data_for_processing_bruker(spc_dir_name)
+
+    filename = path_to_datasets + 'C__NMR_BioNMR_IDPs_Refinement_series_'+str(spectrum_number)+'_ser'
+    full_spectra = np.genfromtxt(filename + '.csv', delimiter='	', skip_header=1)
+    spec_num = len(full_spectra[1, :])
+    full_spectra = full_spectra[:, 1:spec_num - 1]
+    full_spectra = np.transpose(full_spectra)
+    full_spectra = np.flip(full_spectra, 1)
+
+    p1, p30, d16, d20, NS, RG, GPNAM6 = read_params_for_processing(dic)
+    difflist = read_difframp(GPNAM6, acqu_dir_name, grad_shape_dir_name)
+    return full_spectra, difflist, p1, p30, d16, d20, NS, RG
+
 
 def get_data_for_processing(acqu_dir_name, spc_dir_name, grad_shape_dir_name):
     full_spectra, dic = read_data_for_processing_bruker(spc_dir_name)

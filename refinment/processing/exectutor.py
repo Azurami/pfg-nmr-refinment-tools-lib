@@ -5,40 +5,74 @@
 # OUTPUT: D_not_ref, A_not_ref, D_ref, A_ref, refined_integrals, difflist, plots_file_names
 import os
 
+import numpy as np
+
 from refinment.files_controller import make_uuid_dir
 from refinment.plots import Plotter
-from refinment.processing.data_reading import prepare_data_for_processing, get_data_for_processing, UnitConverter
+from refinment.processing.data_reading import prepare_data_for_processing, get_data_for_processing, UnitConverter, \
+    get_data_for_processing_CSV
 from refinment.processing.processor import process_for_comparison
 from tqdm import tqdm
 import pandas as pd
 
-from refinment.refinement import correct_baseline_full_spectra
+from refinment.refinement import get_mean_y, global_baseline_correction, global_baseline_correction_as_in_Matlab
 
 
-def do_processing(right_point, left_point, acqu_dir_name, spc_dir_name, grad_shape_dir_name, prot_name, fit_type, converter, spectrum_number, peak_number):
-    full_spectra, difflist, p1, p30, d16, d20, NS, RG = get_data_for_processing(acqu_dir_name, spc_dir_name, grad_shape_dir_name)
+def do_processing(right_point, left_point, acqu_dir_name, spc_dir_name, grad_shape_dir_name, prot_name, fit_type, converter, spectrum_number, peak_number, noise_wd, path_to_datasets):
+    # TopSpin
+    # full_spectra, difflist, p1, p30, d16, d20, NS, RG = get_data_for_processing(acqu_dir_name, spc_dir_name, grad_shape_dir_name)
+
+     # MestreNova
+    full_spectra, difflist, p1, p30, d16, d20, NS, RG = get_data_for_processing_CSV(acqu_dir_name, spc_dir_name, grad_shape_dir_name, spectrum_number, path_to_datasets)
     gamma = 4258 # for 1H
 
-    noise_left = [(4000, 6000)]
-    noise_right = [(58000, 60000)]
+    # full_spectra = global_baseline_correction_as_in_Matlab(full_spectra, noise_wd, right_point, left_point)
+    right_point_noise = 10000
+    left_point_noise = 60000
+    noise_wd_global = 2000
 
-    full_spectra = correct_baseline_full_spectra(full_spectra, noise_left, noise_right)
+    # full_spectra = global_baseline_correction(full_spectra, noise_wd_global, right_point_noise, left_point_noise)
+
+    y_left_mean, y_right_mean = get_mean_y(full_spectra, noise_wd, right_point, left_point)
 
     sorted_sliced_spectra, sorted_difflist, sorted_full_spectra = prepare_data_for_processing(full_spectra, difflist, left_point, right_point)
 
+    # n = 4
+    #
+    # sorted_sliced_spectra, sorted_difflist, sorted_full_spectra = exclude_first_n(sorted_sliced_spectra, sorted_difflist, sorted_full_spectra, n)
+
+    # n = 3
+    # sorted_sliced_spectra, sorted_difflist, sorted_full_spectra =  exclude_first_n_with_first(sorted_sliced_spectra, sorted_difflist, sorted_full_spectra, n)
     n_points = len(sorted_sliced_spectra[1,:])
 
     plotter = Plotter(prot_name, left_point, right_point, converter, spectrum_number, peak_number)
     plotter.plot_full_spectra_and_region(sorted_full_spectra, left_point, right_point)
 
-    D_not_ref, SDE_not_ref, RMSD_not_ref, D_ref, SDE_ref, RMSD_ref = process_for_comparison(gamma, p30, d20, sorted_difflist, sorted_sliced_spectra, fit_type, p1, d16, plotter)
+    D_not_ref, SDE_not_ref, RMSD_not_ref, D_ref, SDE_ref, RMSD_ref = process_for_comparison(gamma, p30, d20,
+        sorted_difflist, sorted_sliced_spectra, fit_type, p1, d16, plotter, y_left_mean, y_right_mean)
 
     return n_points, NS, RG, D_not_ref, SDE_not_ref, RMSD_not_ref, D_ref, SDE_ref, RMSD_ref
 
 
+def exclude_first_n_with_first(sorted_sliced_spectra, sorted_difflist, sorted_full_spectra, n):
+    n_spectra = len(sorted_difflist)
+
+    sorted_sliced_spectra = np.delete(sorted_sliced_spectra, (1, n), 0)
+    sorted_difflist = np.delete(sorted_difflist, (1, n), 0)
+    sorted_full_spectra = np.delete(sorted_full_spectra, (1, n), 0)
 
 
-def run_processing(prot_name, path_to_datasets, spectra_id, peaks, fit_type):
+    return sorted_sliced_spectra, sorted_difflist, sorted_full_spectra
+
+
+def exclude_first_n(sorted_sliced_spectra, sorted_difflist, sorted_full_spectra, n):
+    n_spectra = len(sorted_difflist)
+    sorted_sliced_spectra = sorted_sliced_spectra[n:n_spectra,:]
+    sorted_difflist = sorted_difflist[n:n_spectra]
+    sorted_full_spectra = sorted_full_spectra[n:n_spectra,:]
+    return sorted_sliced_spectra, sorted_difflist, sorted_full_spectra
+
+def run_processing(prot_name, path_to_datasets, spectra_id, peaks, fit_type, noise_wd, label):
     make_uuid_dir(prot_name)
     number_of_spectra = len(spectra_id)
     df_spectral_data = pd.DataFrame()
@@ -58,7 +92,7 @@ def run_processing(prot_name, path_to_datasets, spectra_id, peaks, fit_type):
             n_points, NS, RG, D_not_ref, SDE_not_ref, RMSD_not_ref, D_ref, SDE_ref, RMSD_ref = \
                 do_processing(right_point, left_point, acqu_dir_name,
                                     spc_dir_name, grad_shape_dir_name, prot_name,
-                                    fit_type, converter, spectrum_number,peak_label)
+                                    fit_type, converter, spectrum_number, peak_label, noise_wd, path_to_datasets)
 
             spectral_data_row = {'spectrum_id': spectrum_number,
                                  'area': peak_label,
@@ -68,9 +102,11 @@ def run_processing(prot_name, path_to_datasets, spectra_id, peaks, fit_type):
                                  'D_not_ref': D_not_ref,
                                  'SDE_not_ref': SDE_not_ref,
                                  'RMSD_not_ref': RMSD_not_ref,
+                                 'BLC points': noise_wd,
                                  'D_ref': D_ref,
                                  'SDE_ref': SDE_ref,
-                                 'RMSD_ref': RMSD_ref
+                                 'RMSD_ref': RMSD_ref,
+                                 'Spftware':label
                                  }
             df_new_row = pd.DataFrame(data=spectral_data_row, index=[spectrum_number])
             # df_spectral_data = df_spectral_data.append(df_new_row, ignore_index=True)
