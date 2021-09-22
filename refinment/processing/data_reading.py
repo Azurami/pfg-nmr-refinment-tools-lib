@@ -8,7 +8,9 @@ import nmrglue as ng
 def get_data_for_processing_CSV(acqu_dir_name, spc_dir_name, grad_shape_dir_name, spectrum_number, path_to_datasets):
     full_spectra, dic = read_data_for_processing_bruker(spc_dir_name)
 
-    filename = path_to_datasets + 'C__NMR_BioNMR_IDPs_Refinement_series_'+str(spectrum_number)+'_ser'
+    # filename = path_to_datasets + 'C__NMR_BioNMR_IDPs_Refinement_series_'+str(spectrum_number)+'_ser'
+    filename = path_to_datasets + 'C__NMR_BioNMR_IDPs_Refinement_series_zero_init_manual_phase_corr_apk2d_abs2_' + str(spectrum_number) + '_ser'
+
     full_spectra = np.genfromtxt(filename + '.csv', delimiter='	', skip_header=1)
     spec_num = len(full_spectra[1, :])
     full_spectra = full_spectra[:, 1:spec_num - 1]
@@ -26,6 +28,17 @@ def get_data_for_processing(acqu_dir_name, spc_dir_name, grad_shape_dir_name):
     difflist = read_difframp(GPNAM6, acqu_dir_name, grad_shape_dir_name)
     return full_spectra, difflist, p1, p30, d16, d20, NS, RG
 
+def read_2d_spc_from_1rr(spc_no_start, spc_number, spc_1D_dir_name):
+    dic, data = ng.bruker.read_pdata(spc_1D_dir_name+str(spc_no_start))
+    full_spc = np.zeros((spc_number,len(data.real)))
+    full_spc[0,:] = data.real
+
+    spc_no = 1
+    for i in range(spc_no_start+1,spc_no_start+spc_number):
+        dic, data = ng.bruker.read_pdata(spc_1D_dir_name+str(i))
+        full_spc[spc_no,:] = data.real
+        spc_no = spc_no + 1
+    return full_spc
 
 def read_data_for_processing_bruker(data_directory):
     dic, data = ng.bruker.read_pdata(data_directory)

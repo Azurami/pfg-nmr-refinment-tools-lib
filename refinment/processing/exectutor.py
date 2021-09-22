@@ -20,18 +20,19 @@ from refinment.refinement import get_mean_y, global_baseline_correction, global_
 
 def do_processing(right_point, left_point, acqu_dir_name, spc_dir_name, grad_shape_dir_name, prot_name, fit_type, converter, spectrum_number, peak_number, noise_wd, path_to_datasets):
     # TopSpin
-    # full_spectra, difflist, p1, p30, d16, d20, NS, RG = get_data_for_processing(acqu_dir_name, spc_dir_name, grad_shape_dir_name)
+    full_spectra, difflist, p1, p30, d16, d20, NS, RG = get_data_for_processing(acqu_dir_name, spc_dir_name, grad_shape_dir_name)
 
-     # MestreNova
-    full_spectra, difflist, p1, p30, d16, d20, NS, RG = get_data_for_processing_CSV(acqu_dir_name, spc_dir_name, grad_shape_dir_name, spectrum_number, path_to_datasets)
-    gamma = 4258 # for 1H
+    # MestreNova
+    # full_spectra, difflist, p1, p30, d16, d20, NS, RG = get_data_for_processing_CSV(acqu_dir_name, spc_dir_name, grad_shape_dir_name, spectrum_number, path_to_datasets)
+
 
     # full_spectra = global_baseline_correction_as_in_Matlab(full_spectra, noise_wd, right_point, left_point)
-    right_point_noise = 10000
-    left_point_noise = 60000
-    noise_wd_global = 2000
-
+    # right_point_noise = 10000
+    # left_point_noise = 60000
+    # noise_wd_global = 2000
     # full_spectra = global_baseline_correction(full_spectra, noise_wd_global, right_point_noise, left_point_noise)
+
+    gamma = 4258  # for 1H
 
     y_left_mean, y_right_mean = get_mean_y(full_spectra, noise_wd, right_point, left_point)
 
@@ -50,7 +51,7 @@ def do_processing(right_point, left_point, acqu_dir_name, spc_dir_name, grad_sha
 
     D_not_ref, SDE_not_ref, RMSD_not_ref, D_ref, SDE_ref, RMSD_ref = process_for_comparison(gamma, p30, d20,
         sorted_difflist, sorted_sliced_spectra, fit_type, p1, d16, plotter, y_left_mean, y_right_mean)
-
+    # D_not_ref, SDE_not_ref, RMSD_not_ref, D_ref, SDE_ref, RMSD_ref = 0,0,0,0,0,0
     return n_points, NS, RG, D_not_ref, SDE_not_ref, RMSD_not_ref, D_ref, SDE_ref, RMSD_ref
 
 

@@ -9,23 +9,31 @@ if not sys.warnoptions:
     warnings.simplefilter("ignore")
 
 # E.g. acqu_dir_name =  + str(spectrum_number) + '\\' after that spectrum_number is follow
-path_to_datasets = 'C:\\NMR\\BioNMR\\IDPs_Refinement_series\\'
+# path_to_datasets = 'C:\\NMR\\BioNMR\\IDPs_Refinement_series_zerod_ph_diff_apk2d_apk_abs2\\'
+path_to_datasets = 'C:\\NMR\\BioNMR\\IDPs_Refinement_series_zero_init_manual_phase_corr_apk2d_abs2\\'
+# path_to_datasets = 'C:\\NMR\\BioNMR\\ivanttt\\'
 spectra_id = range(1,78)
-# spectra_id = [67, 1000001]
+# spectra_id = [17]
 # spectra_id = [1000001]
+# spectra_id = [1]
 fit_type = 'dstebp'
 
 noise_wd = 40
 
-# peaks = [(50100, 50900), (49100, 49790), (46030, 48900), (42900, 45900)] # peak 1 left-right points small-peak
+# peaks = [(50100, 50900),  (42900, 45900)] # peak 1 left-right points small-peak
 
-peaks = [(50100, 50900),  (42900, 45900)] # peak 1 left-right points small-peak
+peaks = [(50250, 50900),  (42900, 45900)] # peak 1 left-right points small-peak
 
-# peaks = [(50100, 50900)] # peak 1 left-right points small-peak
-# peaks = [(42900, 45900)] # peak 1 left-right points small-peak
+# prot_name = 'Lys_TopSpin_reg_1-2_diff-apk2d_abs2_ideal'
+# prot_name = 'Lys_TopSpin_ivan_manual_ph_by_mean_ideal'
+prot_name = 'Lys_MestreNova_ivan_manual_ph_by_mean_abs2_changed_peak_area'
 
-prot_name = 'Lys_MestreNova_peak1_peak_4_local_blc_avr_81'
 
+# prot_name = 'Speed_test'
+
+# label = 'TopSpin'
+
+# prot_name = 'Lys_MestreNova_ivan_manual_ph_by_mean_blc_ideal'
 label = 'MestreNova'
 
 
