@@ -21,6 +21,12 @@ def get_data_for_processing_CSV(acqu_dir_name, spc_dir_name, grad_shape_dir_name
     difflist = read_difframp(GPNAM6, acqu_dir_name, grad_shape_dir_name)
     return full_spectra, difflist, p1, p30, d16, d20, NS, RG
 
+def get_data_for_processing_from_1rr(acqu_dir_name, spc_dir_name, grad_shape_dir_name, spc_no_start, spc_number, spc_1D_dir_name):
+    _, dic = read_data_for_processing_bruker(spc_dir_name)
+    full_spectra = read_2d_spc_from_1rr(spc_no_start, spc_number, spc_1D_dir_name)
+    p1, p30, d16, d20, NS, RG, GPNAM6 = read_params_for_processing(dic)
+    difflist = read_difframp(GPNAM6, acqu_dir_name, grad_shape_dir_name)
+    return full_spectra, difflist, p1, p30, d16, d20, NS, RG
 
 def get_data_for_processing(acqu_dir_name, spc_dir_name, grad_shape_dir_name):
     full_spectra, dic = read_data_for_processing_bruker(spc_dir_name)

@@ -10,7 +10,7 @@ import numpy as np
 from refinment.files_controller import make_uuid_dir
 from refinment.plots import Plotter
 from refinment.processing.data_reading import prepare_data_for_processing, get_data_for_processing, UnitConverter, \
-    get_data_for_processing_CSV
+    get_data_for_processing_CSV, get_data_for_processing_from_1rr
 from refinment.processing.processor import process_for_comparison
 from tqdm import tqdm
 import pandas as pd
@@ -19,8 +19,18 @@ from refinment.refinement import get_mean_y, global_baseline_correction, global_
 
 
 def do_processing(right_point, left_point, acqu_dir_name, spc_dir_name, grad_shape_dir_name, prot_name, fit_type, converter, spectrum_number, peak_number, noise_wd, path_to_datasets):
+    spc_no_start= 10001
+    spc_number = 20
+    spc_1D_dir_name = path_to_datasets + str(spectrum_number) + '\\pdata\\'
+
     # TopSpin
-    full_spectra, difflist, p1, p30, d16, d20, NS, RG = get_data_for_processing(acqu_dir_name, spc_dir_name, grad_shape_dir_name)
+    # full_spectra, difflist, p1, p30, d16, d20, NS, RG = get_data_for_processing(acqu_dir_name, spc_dir_name, grad_shape_dir_name)
+
+    # TopSpin from 1rr stack
+    full_spectra, difflist, p1, p30, d16, d20, NS, RG = get_data_for_processing_from_1rr(acqu_dir_name, spc_dir_name,
+                                                                                grad_shape_dir_name, spc_no_start,
+                                                                                         spc_number, spc_1D_dir_name)
+
 
     # MestreNova
     # full_spectra, difflist, p1, p30, d16, d20, NS, RG = get_data_for_processing_CSV(acqu_dir_name, spc_dir_name, grad_shape_dir_name, spectrum_number, path_to_datasets)
