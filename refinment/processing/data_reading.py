@@ -9,7 +9,9 @@ def get_data_for_processing_CSV(acqu_dir_name, spc_dir_name, grad_shape_dir_name
     full_spectra, dic = read_data_for_processing_bruker(spc_dir_name)
 
     # filename = path_to_datasets + 'C__NMR_BioNMR_IDPs_Refinement_series_'+str(spectrum_number)+'_ser'
-    filename = path_to_datasets + 'C__NMR_BioNMR_IDPs_Refinement_series_zero_init_manual_phase_corr_apk2d_abs2_' + str(spectrum_number) + '_ser'
+    # filename = path_to_datasets + 'C__NMR_BioNMR_IDPs_Refinement_series_zero_init_manual_phase_corr_apk2d_abs2_' + str(spectrum_number) + '_ser'
+    filename = path_to_datasets + 'C__NMR_BioNMR_IDPs_Refinement_series_zero_init_manual_phase_corr_spline_' + str(
+        spectrum_number) + '_ser'
 
     full_spectra = np.genfromtxt(filename + '.csv', delimiter='	', skip_header=1)
     spec_num = len(full_spectra[1, :])

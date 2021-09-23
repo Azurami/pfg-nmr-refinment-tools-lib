@@ -27,13 +27,13 @@ def do_processing(right_point, left_point, acqu_dir_name, spc_dir_name, grad_sha
     # full_spectra, difflist, p1, p30, d16, d20, NS, RG = get_data_for_processing(acqu_dir_name, spc_dir_name, grad_shape_dir_name)
 
     # TopSpin from 1rr stack
-    full_spectra, difflist, p1, p30, d16, d20, NS, RG = get_data_for_processing_from_1rr(acqu_dir_name, spc_dir_name,
-                                                                                grad_shape_dir_name, spc_no_start,
-                                                                                         spc_number, spc_1D_dir_name)
+    # full_spectra, difflist, p1, p30, d16, d20, NS, RG = get_data_for_processing_from_1rr(acqu_dir_name, spc_dir_name,
+    #                                                                             grad_shape_dir_name, spc_no_start,
+    #                                                                                      spc_number, spc_1D_dir_name)
 
 
     # MestreNova
-    # full_spectra, difflist, p1, p30, d16, d20, NS, RG = get_data_for_processing_CSV(acqu_dir_name, spc_dir_name, grad_shape_dir_name, spectrum_number, path_to_datasets)
+    full_spectra, difflist, p1, p30, d16, d20, NS, RG = get_data_for_processing_CSV(acqu_dir_name, spc_dir_name, grad_shape_dir_name, spectrum_number, path_to_datasets)
 
 
     # full_spectra = global_baseline_correction_as_in_Matlab(full_spectra, noise_wd, right_point, left_point)
