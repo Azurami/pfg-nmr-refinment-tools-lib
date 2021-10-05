@@ -10,7 +10,7 @@ if not sys.warnoptions:
 
 # E.g. acqu_dir_name =  + str(spectrum_number) + '\\' after that spectrum_number is follow
 # path_to_datasets = 'C:\\NMR\\BioNMR\\IDPs_Refinement_series_zerod_ph_diff_apk2d_apk_abs2\\'
-path_to_datasets = 'C:\\NMR\\BioNMR\\IDPs_Refinement_series_zero_init_manual_phase_corr_spline\\'
+path_to_datasets = 'C:\\NMR\\BioNMR\\IDPs_Refinement_series_zero_init_manual_phase_corr_5_degree_added\\'
 # path_to_datasets = 'C:\\NMR\\BioNMR\\ivanttt\\'
 spectra_id = range(1,78)
 # spectra_id = [1000001]
@@ -27,17 +27,18 @@ peaks = [(50100, 50900),  (42900, 45900)] # peak 1 left-right points small-peak
 # # prot_name = 'Lys_TopSpin_ivan_manual_ph_by_mean_spline_ivan_2'
 # prot_name = 'Lys_TopSpin_ivan_manual_ph_by_mean_spline_ivan_2_ideal'
 
-
+prot_name = 'Lys_TopSpin_manual_ph_by_mean_5_degree_added'
+# prot_name = 'Lys_TopSpin_manual_ph_by_mean_5_degree_added_ideal'
 
 # prot_name = 'Speed_test'
 
-# label = 'TopSpin'
+label = 'TopSpin'
 
 # prot_name = 'Lys_MestreNova_ivan_manual_ph_by_mean_blc_ideal'
 
-prot_name = 'Lys_MestreNova_ivan_manual_ph_by_mean_blc_mpoints'
-# prot_name = 'Lys_MestreNova_ivan_manual_ph_by_mean_blc_mpoints_ideal'
-label = 'MestreNova'
+# prot_name = 'Lys_MestreNova_ivan_manual_ph_by_mean_blc_mpoints'
+# # prot_name = 'Lys_MestreNova_ivan_manual_ph_by_mean_blc_mpoints_ideal'
+# label = 'MestreNova'
 
 
 start_time = time.time()
