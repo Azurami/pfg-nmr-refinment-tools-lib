@@ -24,12 +24,12 @@ def do_processing(right_point, left_point, acqu_dir_name, spc_dir_name, grad_sha
     spc_1D_dir_name = path_to_datasets + str(spectrum_number) + '\\pdata\\'
 
     # TopSpin
-    full_spectra, difflist, p1, p30, d16, d20, NS, RG = get_data_for_processing(acqu_dir_name, spc_dir_name, grad_shape_dir_name)
+    # full_spectra, difflist, p1, p30, d16, d20, NS, RG = get_data_for_processing(acqu_dir_name, spc_dir_name, grad_shape_dir_name)
 
     # TopSpin from 1rr stack
-    # full_spectra, difflist, p1, p30, d16, d20, NS, RG = get_data_for_processing_from_1rr(acqu_dir_name, spc_dir_name,
-    #                                                                             grad_shape_dir_name, spc_no_start,
-    #                                                                                      spc_number, spc_1D_dir_name)
+    full_spectra, difflist, p1, p30, d16, d20, NS, RG = get_data_for_processing_from_1rr(acqu_dir_name, spc_dir_name,
+                                                                                grad_shape_dir_name, spc_no_start,
+                                                                                         spc_number, spc_1D_dir_name)
 
 
     # MestreNova
